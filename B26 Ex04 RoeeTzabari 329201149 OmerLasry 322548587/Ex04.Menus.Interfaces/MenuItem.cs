@@ -34,5 +34,7 @@ namespace Ex04.Menus.Interfaces
         {
             ItemName = i_Name;
         }
+
+        public abstract void Select();
     }
 }

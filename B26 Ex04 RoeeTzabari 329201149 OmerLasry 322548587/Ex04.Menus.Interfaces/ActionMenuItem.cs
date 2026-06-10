@@ -14,9 +14,17 @@ namespace Ex04.Menus.Interfaces
             m_Action = i_Action;
         }
 
-        public void ExecuteAction()
+        public ActionMenuItem(string i_Name) : base(i_Name)
         {
-            m_Action.Execute();
+            m_Action = null;
+        }
+
+        public override void Select()
+        {
+            if(m_Action != null)
+            {
+                m_Action.Execute();
+            }
         }
     }
 }
