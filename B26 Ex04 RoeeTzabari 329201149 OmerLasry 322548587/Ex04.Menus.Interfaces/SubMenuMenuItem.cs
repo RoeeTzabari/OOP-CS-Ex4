@@ -9,69 +9,85 @@ namespace Ex04.Menus.Interfaces
 {
     public class SubMenuMenuItem : MenuItem
     {
-        public enum eNavigationItem
+        public enum eNavigationType
         {
             Exit,
             Back,
         }
 
-        private List<MenuItem> m_SubItems;
+        private readonly List<MenuItem> r_SubItems;
 
-        private ActionMenuItem m_NavigationItem;
+        private readonly ActionMenuItem r_NavigationItem;
         public ActionMenuItem NavigationItem
         {
             get
             {
-                return m_NavigationItem;
+                return r_NavigationItem;
             }
         }
-        public SubMenuMenuItem(string i_Name, eNavigationItem i_NavigationItem) : base(i_Name)
+        public SubMenuMenuItem(string i_Name, eNavigationType i_NavigationType) : base(i_Name)
         {
-            m_SubItems = new List<MenuItem>();
-            m_SubItems.Add(i_NavigationItem);
-            m_NavigationItem = i_NavigationItem;
+            r_SubItems = new List<MenuItem>();
+
+            ActionMenuItem navItem = new ActionMenuItem(i_NavigationType.ToString());
+            r_NavigationItem = navItem;
         }
 
         public void AddMenuItem(MenuItem i_MenuItem)
         {
             if (i_MenuItem == null)
             {
-                throw new ArgumentNullException("Exit Item must have an action.");
+                throw new ArgumentNullException("Menu item cannot be null.");
             }
-            m_SubItems.Add(i_MenuItem);
+            r_SubItems.Add(i_MenuItem);
         }
 
         public void RemoveMenuItem(MenuItem i_MenuItem)
         {
-            m_SubItems.Remove(i_MenuItem);
+            r_SubItems.Remove(i_MenuItem);
         }
 
         public override void Select()
         {
-            string choice;
-            bool isValid = false, shouldExit = false;
+            bool shouldExit = false;
+            string navigationSuffix = r_NavigationItem.ItemName == "Exit" ? "exit" : "go back";
 
-            while(!shouldExit)
+            while (!shouldExit)
             {
+                Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("** {0} **", ItemName);
-                Console.ForegroundColor = ConsoleColor.Black;
+                Console.ResetColor();
                 Console.WriteLine("---------------------------");
 
                 Console.WriteLine(ToString());
-                Console.WriteLine($"Please enter you choice (1-{m_SubItems.Count} or 0 to exit):");
+                if (r_SubItems.Count <= 0)
+                {
+                    Console.WriteLine($"Please enter 0 to {navigationSuffix}.");
+                }
+                else
+                {
+                    Console.WriteLine($"Please enter your choice (1-{r_SubItems.Count - 1} or 0 to {navigationSuffix}):");
+                }
 
-                choice = Console.ReadLine();
-                isValid = TryParseItemChoice(choice, out int choiceInt);
+                string choice = Console.ReadLine();
+                bool isValid = tryParseItemChoice(choice, out int choiceInt);
+
                 while (!isValid)
                 {
                     Console.WriteLine("Invalid choice, Please try again:");
                     choice = Console.ReadLine();
-                    isValid = TryParseItemChoice(choice, out choiceInt);
+                    isValid = tryParseItemChoice(choice, out choiceInt);
                 }
-
-                MenuItem item = m_SubItems.ElementAt(choiceInt);
-                item.Select();   
+                if (choiceInt == 0)
+                {
+                    shouldExit = true;
+                }
+                else
+                {
+                    MenuItem item = r_SubItems.ElementAt(choiceInt - 1);
+                    item.Select();
+                }
             }
         }
 
@@ -79,24 +95,24 @@ namespace Ex04.Menus.Interfaces
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 1; i < m_SubItems.Count; i++)
+            for (int i = 0; i < r_SubItems.Count; i++)
             {
-                sb.Append(string.Format("{0}. {1}\n", i, m_SubItems.ElementAt(i).ItemName));
+                sb.Append(string.Format("{0}. {1}\n", i + 1, r_SubItems.ElementAt(i).ItemName));
             }
 
-            sb.Append(string.Format("0. {0}\n", m_NavigationItem.ItemName));
+            sb.Append(string.Format("0. {0}\n", r_NavigationItem.ItemName));
 
             return sb.ToString();
         }
 
-        private bool TryParseItemChoice(string i_Input, out int i_ItemIndex)
+        private bool tryParseItemChoice(string i_Input, out int i_ItemIndex)
         {
             bool isValid = false;
 
             i_ItemIndex = 0;
             if (int.TryParse(i_Input, out int result))
             {
-                isValid = result >= 0 && result <= m_SubItems.Count;
+                isValid = result >= 0 && result <= r_SubItems.Count;
                 i_ItemIndex = result;
             }
 

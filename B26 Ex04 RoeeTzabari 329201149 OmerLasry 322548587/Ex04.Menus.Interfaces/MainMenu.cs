@@ -43,10 +43,8 @@ namespace Ex04.Menus.Interfaces
 
         public MainMenu(string i_Title)
         {
-            ActionMenuItem exitItem = new ActionMenuItem("Exit");
-
             m_MenuTitle = i_Title;
-            m_MenuItems = new SubMenuMenuItem(m_MenuTitle, exitItem);
+            m_MenuItems = new SubMenuMenuItem(m_MenuTitle, SubMenuMenuItem.eNavigationType.Exit);
         }
 
         public void AddMenuItem(MenuItem i_MenuItem)
