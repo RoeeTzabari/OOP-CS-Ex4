@@ -67,7 +67,7 @@ namespace Ex04.Menus.Interfaces
                 }
                 else
                 {
-                    Console.WriteLine($"Please enter your choice (1-{r_SubItems.Count - 1} or 0 to {navigationSuffix}):");
+                    Console.WriteLine($"Please enter your choice (1-{r_SubItems.Count} or 0 to {navigationSuffix}):");
                 }
 
                 string choice = Console.ReadLine();
