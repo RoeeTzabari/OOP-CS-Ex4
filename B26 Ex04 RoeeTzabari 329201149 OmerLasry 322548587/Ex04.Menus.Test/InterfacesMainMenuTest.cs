@@ -39,9 +39,9 @@ namespace Ex04.Menus.Test
             {
                 int count = 0;
 
-                for (int i = 0; i < i_Text.Length; i++)
+                foreach (char c in i_Text)
                 {
-                    if (Char.IsUpper(i_Text[i]))
+                    if (char.IsUpper(c))
                     {
                         count++;
                     }
